@@ -1,0 +1,168 @@
+\chapter{Theory}
+\section{Qubit Description}
+In the $\{ \ket{S},\ket{T_0} \}$ Basis the Hamiltonian is most commonly written as (CITE HANSON) written as
+\begin{equation}
+    H=\frac{\hbar J(\epsilon)}{2}\sigma_z + \frac{\hbar B_z}{2} \sigma_x.
+\end{equation}
+
+However it might be convenient, especially for computational purposes to rewrite the Hamiltonian in the $\{\ud,\du \}$ 
+\begin{equation}
+    H=\frac{\hbar J(\epsilon)}{2}\px + \frac{\hbar B_z}{2} \pz.
+\end{equation}
+such that the idle axis i.e. when the exchange interaction is turned points in the $z$-direction.
+Pictures: Structure, Gates, Computational Cycle
+\subsection{Exchange Only Two Qubit System}
+For our two qubit system we want to exchange couple for quantum dots, resulting in two $\sts$ qubits, with an additional exchange coupling and magnetic field gradient in between. In order to model this system we start with an generic $N$ electron Heisenberg Hamiltonian
+\begin{equation}
+    H(t)=\mu \sum_{n=1}^N B_n(t) \pz^n + \frac{1}{4} \sum_{\langle i,j \rangle} J_{ij}(t)(\vecsig ^i \cdot \vecsig ^j - \eye).
+\end{equation}
+Since the experimentally accessible variables are $J_{ij}$ and $\db_{ij}=B_j-B_i$ we can rewrite $H$ in these terms for the case $N=4$ to
+\begin{align}
+    H(t)  &=  B_\mr{G}             [\pz^{(1)} + \pz^{(2)} + \pz^{(3)} + \pz^{(4)} ]  \nonumber\\
+          &+ \frac{\db_{12}(t)}{8} [-3\pz^{(1)} + \pz^{(2)} + \pz^{(3)} + \pz^{(4)} ]\nonumber \\
+          &+ \frac{\db_{23}(t)}{4} [-\pz^{(1)} - \pz^{(2)} + \pz^{(3)} + \pz^{(4)} ] \nonumber\\
+          &+\frac{\db_{34}(t)}{8}  [-\pz^{(1)} - \pz^{(2)} - \pz^{(3)} +3 \pz^{(4)} ] \\
+          &+\frac{J_{12}(\epsilon_{12}(t))}{4} (\vecsig ^1 \cdot \vecsig ^2 - \eye) \nonumber\\
+          &+\frac{J_{12}(\epsilon_{23}(t))}{4} (\vecsig ^2 \cdot \vecsig ^3 - \eye) \nonumber\\
+          &+\frac{J_{12}(\epsilon_{34}(t))}{4} (\vecsig ^3 \cdot \vecsig ^4 - \eye). \nonumber
+\end{align}
+
+Again using the $m_z=0$ subspace for computation we choose the basis to
+\begin{align}
+\ket{00} &= \ud \ud  \nonumber\\
+\ket{01} &= \ud \du \nonumber\\
+\ket{10} &= \du \ud \nonumber\\
+\ket{11} &= \du \du .
+\end{align}
+However, unlike the one qubit system we now obtain two leakage states, namely $\uu \dd$ and $\dd \uu$ that are not split off energetically by the external magnetic field. This allows for coherent manipulation in and out of the leakage subspace.
+
+
+\section{Fidelity Measures}
+The is a rather large number of different measures of "Fidelity" that is used in literature. While all have their place and can usually be used interchangeably it is important to understand the subtle differences and restrict oneself to only one to avoid any confusion. Here I would like to introduce the most important ones which will be used throughout this thesis.
+
+The state fidelity is used to characterize the distance of two states represented by the density matrices $\dm_1$ and $\dm_2$ and is defined by CITE
+\begin{equation}
+\F_\text{state}(\dm_1,\dm_2)=\tr \sqrt{\dm^{1/2}_1 \dm_2 \dm^{1/2}_1}.
+\end{equation}
+In case one of the two states is pure (e.g. $\dm_1$) in form of a state vector $\ket{\psi}$, $\F_\text{state}$ becomes
+\begin{equation}
+\F_\text{state}(\ket{\psi},\dm_2)=\tr \sqrt{\bra{\psi} \dm_2 \ket{\psi}},
+\end{equation}
+therefore the state fidelity can be interpreted as the overlap of the two states $\ket{\psi}$ and $\dm_2$.
+
+However, we are usually interested in the Fidelity of a noisy quantum process, $\qp$, implementing a perfect unitary operator $\Ut$. Of course, we could simply apply both $\Ut$ and $\qp$ to an arbitrary initial state $\ket{\psi}$ and use REF. In order to gain Independence from the initial state however we can choose one of two options. Firstly we could introduce the minimum fidelity
+\begin{equation}
+\F_\text{min}(\Ut,\qp)=\min_{\pqs} \F(\Ut \pqs, \qp(\pqs \bra{\psi})).
+\end{equation}
+This gives a worst case estimate of the fidelity of an operation $\qp$.
+Alternatively we can average overall possible initial states
+\begin{equation}
+\mean{\F}(\Ut,\qp)=\int \F(\Ut \pqs, \qp(\pqs \bra{\psi}))^2 d\psi.
+\label{eq:avgfid}
+\end{equation}
+We can relate this fidelity measure to another one, that is defined differently.
+The entaglement fidelity, $\F_e$, is defined via a pure state $\ket{RQ}$, where the quantum operation $\qp$ only acts on one half of the system, e.g. on $Q$ and leaves the other half untouched. $\F_e$ is than defined as
+\begin{equation}
+\F_e(\ket{RQ} \bra{RQ},\qp(\ket{RQ} \bra{RQ}))=\F_\text{state}(\ket{RQ} \bra{RQ},(\eye_R \otimes \qp)(\ket{RQ} \bra{RQ}))^2.
+\end{equation}
+Since we included a square in the definition of \ref{eq:avgfid}, we can now directly relate this to the entanglement fidelity via
+\begin{equation}
+\mean{\F}(\Ut,\qp)=\frac{d\F_e(\Ut,\qp)+1}{d+1}.
+\end{equation}
+where $d$ is the dimension of the qubit system, e.g. for one qubit ($d=2$) this results in $1-\mean{\F}=\frac{2}{3}(\IF_e)$ and for two qubits ($d=4$) this leads to $1-\mean{\F}=\frac{4}{5}(\IF_e)$.
+CITE
+
+\section{Pauli Transfer Matrix}
+As it has been previously demonstrated on single qubits gates, we want to implement an self consistent, iterative tune up of our gates that can be implemented in real experiments. For single qubit gates the decomposition of errors in axis and angle errors is straight forward. However in the two qubit space this simple and intuitive picture is somewhat lost. Therefore we need to find an alternative, more general way to quantify our gate errors that ideally is still somewhat intuitive and allows us to employ our iterative tuneup protocol for a two qubit system.
+
+A very useful tool in this context is the Pauli-Transfer-Matrix (PTM) as defined by
+\begin{equation}
+    (\ptm_\qp)_{ij}=\frac{1}{d}\tr{(P_i \qp(P_j))},
+\end{equation}
+where $P_i$ is given by the set of Pauli Matrices and unity, $\{\eye, \px,\py,\pz\}^{\otimes n}$.
+Intuitively a state given by its density matrix, $\rho$, is decomposed in the basis $\vec{P}$ such that
+\begin{equation}
+\dm = \frac{1}{d} \vec{p} \cdot \vec{P}.
+\end{equation}
+The same is done to the final state after the process $\dm_\text{f}=\qp(\dm)$ resulting in $\vec{p}_\text{f}$. The PTM is the matrix that connects $\vec{p}_\text{f}$ and $\vec{p}$ by \begin{equation}
+    \vec{p}_\text{f}=\ptm \vec{p}
+\end{equation}
+This allows for very easy and intuitive analysis of the gates as can be seen here (CITE QPT Transmon)
+
+\section{Two Qubit Bootstrap Tomography}
+% S=    | 1o1 1oX 1oY 1oZ |
+%       | Xo1 XoX XoY XoZ |
+%       | Yo1 YoX YoY YoZ |
+%       | Zo1 ZoX ZoY ZoZ |
+For the two dimensional qubit system $\vec{P}$ is given by the set
+\begin{equation}
+\{\eye, \px,\py,\pz\}^{\otimes 2}=
+\begin{Bmatrix}
+\ii & \ix & \iy & \iz \\
+\XI & \xx & \xy & \xz \\
+\yi & \yx & \yy & \yz \\
+\zi & \zx & \zy & \zz 
+\end{Bmatrix}.
+\end{equation}
+Again $\vec{p}$ will be the corresponding coeffiecents of $\dm$ of a given state. We need to construct sequences of the gates
+$U_A = X_{\pi/2}$, $U_B = Y_{\pi/2}$ and $U_C = CNOT$ that allow us to determine all errors on $\vec{p}$, with $\vec{p}_0$ being the coefficients for a perfect gate. 
+
+Therefore, we calculate the expectation value of our two measurement operators  $M_{i(j)} \in \{ \zi, \iz \}$ given by
+\begin{equation}
+S_j =\tr{(M_{i(j)}\dm_j)}
+\end{equation}
+where  $\dm_j = U_j \dm_0 U_j^\dagger$. Assuming we have near perfect gates we linearize around $\vec{p}_0$ and find gates that fullfil
+\begin{equation}
+S(\vec{p})-S(\vec{p}_0) =\frac{\dif \vec{S}}{\dif \vec{p}}(\vec{p}-\vec{p}_0)
+\end{equation}
+by determining the Jacobian $\frac{\dif \vec{S}}{\dif \vec{p}}$ numerically. From the soulutions we select the matrix $\frac{\dif \vec{S}}{\dif \vec{p}}$ with the best condition number since we want to use $\vec{S}$ for optimizing our gates in the experiment.
+The resulting sequences are shown in \rtab{tab:sequences}. We apply each of the sequences in our simulation to the ground state $\ket{00}$. Sequences 1 to XX are designed to yield the measurement outcome 0 as we are maximally sensitive at this point. Sequences XX to ZZ are used to include decoherence. Without decoherence these would give the result one. If decoherence is included they will be modified with a factor $(1-\frac{16}{15}(\IF_e))$ as explained in REF.
+  
+
+
+\section{Depolarizing Channel}
+The simplest model to  estimate the effect of noise on a quantum state is the depolarizing channel. In this view, the qubit is depolarized meaning placed in a completely mixed state $\eye/2$ with a probability $p$. Accordingly the qubit is left untouched remaining in its initial state with a probability $1-p$.
+This operation can be written as
+\begin{equation}
+    \qp (\rho)=\frac{p\eye}{2}+(1-p)\rho
+    \label{eq:depol2d}
+\end{equation}
+or for a qubit system of arbitrary dimension
+\begin{equation}
+    \qp (\rho)=\frac{p\eye}{d}+(1-p)\rho
+\end{equation}
+where $d$ is the dimension of the qubit space, e.g. for a two qubit system $d=4$. For a single qubit a depolarizing channel can be thought of a uniform contraction of the bloch sphere.
+A common pitfall when modeling depolarizing channels is the parametrization of the probability $p$. Using the equation
+\begin{equation}
+    \frac{\eye}{2}=\frac{\rho+\px \rho \px + \py \rho \py +\pz \rho \pz }{4}
+\end{equation}
+we can rewrite \ref{eq:depol2d} 
+\begin{equation}
+    \qp (\rho)=\left(1-\frac{3p}{4}\right)\rho+\frac{p}{4}(\rho+\px \rho \px + \py \rho \py +\pz \rho \pz )
+\end{equation}
+which is often written as
+\begin{equation}
+    \mathcal{E} (\rho)=(1-q) \rho+\frac{q}{3}(\rho+\px \rho \px + \py \rho \py +\pz \rho \pz )
+\end{equation}
+using $q=\frac{3p}{4}$. Often the depolarizing channel is introduced without any indication which parametrization is used.
+In order to model decoherence quickly when knowing only $\F_e$ we need to estimate the minimum state fidelity of a depolarizing channel starting with a pure state $\ket{\psi}$
+\begin{equation}
+\F_{state}(\ket{\psi}\bra{\psi},\qp(\ket{\psi}\bra{\psi}))=\sqrt{\bra{\psi} \left(\frac{p\eye}{d}+(1-p)\ket{\psi}\bra{\psi} \right) \ket{\psi}}
+\end{equation}
+leading us to
+\begin{equation}
+\mean{\F} \approx \F^2_{state} = 1-\frac{d-1}{d}p.
+\end{equation}
+Using REF for a two qubit system this leads to $\mean{\F}=1-\frac{3}{4}p$ and finally
+\begin{equation}
+\F_e=1-\frac{15}{16}p.
+\end{equation}
+We can use this result to estimate the effect of decoherence on our measurement, $\langle(\pz \otimes \eye )\rangle$ for
+\begin{align}
+\langle(\pz \otimes \eye)\rangle &=\tr{[\qp(\rho) (\pz \otimes \eye)]} \\
+                     &=\underbrace{\frac{p}{d}\, \tr{(\pz \otimes \eye)}}_{=0}+(1-p) \, \tr (\rho (\pz \otimes \eye))\\
+                     &=(1-p)\langle(\pz \otimes \eye)\rangle_{\text{w/o noise}}\\
+                     &=(1-\frac{16}{15}(\IF_e)) \langle(\pz \otimes \eye)\rangle_{\text{w/o noise}}.
+\end{align}
+where we used $d=4$ in the last step. This allows us to model the effect of decoherence on our measurement simply by multiplying a factor to our measurement outcome without noise. 
+

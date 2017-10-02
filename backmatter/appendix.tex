@@ -1,0 +1,134 @@
+\begin{appendix}
+
+	\chapter{Appendices}					% erzeugt Kapitel ohne Nummerierung sowie den entsprechenden Eintrag ins Inhaltsverzeichnis;
+															% führt bei meinem Layout dazu, dass auf der Kapitelanfangsseite des Anhangs nicht über dem Strich noch 
+															% einmal Appendix steht -> Appendix ist nur "Pseudokapitel"
+	\refstepcounter{chapter}		% beginnt mit der Nummerierung eines Pseudokapitels, weist also dem Appendix-"Kapitel" eine Nummerierung zu, 
+															% so dass die Sections im Inhaltsverzeichnis unter A.1, A.2 usw. aufgelistet werden
+	
+	%\pagenumbering{Roman}   
+											        % \pagenumbering{Art} legt die Art der Seitenzählung fest. Ab dem Auftreten dieses Befehls erscheinen Seitennummern in 
+											        % der angegebenen Darstellungsart; dabei steht arabic für arabische Zahlen, roman für römische Zahlen und alph für 
+											        % lateinische Buchstaben. Roman und Alph stehen für die entsprechenden Großbuchstaben (s.o.). 
+	
+	\renewcommand{\thesection}{\Alph{section}}
+	\numberwithin{equation}{section}
+	\numberwithin{figure}{section}
+	\numberwithin{table}{section}
+	
+%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+										% \pagenumbering{Art} 
+\section{Device Layouts}
+\subsection{002}
+\subsection{003}
+\subsection{005}
+
+\section{Device Testing Procedure}
+\label{app:testing}
+
+\begin{enumerate}
+\item{In order to contact the device, an interposer chip is glued onto a PCB using GE varnish. It is essential to cover the entire part of the PCB that is supposed to take the interposer with the glue and prevent the formation of air bubbles as these can lead to problems with wire-bonding.}
+\item{Next the sample is glued onto the interposer chip. Again formation of air pockets should be avoided. Additionally care has to be taken in order to prevent the glue to get onto the bond pads on the sample or the interposer side.}
+\item{At this point the sample should be grounded at all times! This includes a shorting PCB in the DC connection port as well as shoring caps on the RF lines.}
+\item{Now the sample and interposer can be wire-bonded to the PCB. The connection between PCB and interposer should be done first to ensure proper grounding.}
+\item{From this point forward the sample should be transported on ESD safe foam and in an ESD save compartment. }
+\item{At this point the lines in the ,,dicke Bertha'' or any other setup used should be checked for their connection and their resistance to ground.}
+\item{Once proper functionality of the setup is ensured, we can mount our sample to the dipstick. Special care should be taken when connecting SMPM connectors as they have a tendency to break. Since there are more RF lines on the PCB then in the setup, a single line can be connected to multiple ones on the PCB.}
+\item{Now room temperature measurements can be performed. Using a Keithley 2400 source meter unit, we can check the connection to our ohmics and our gates. The Keithley is set to $ \si{0.V}$} with a compliance of $\si{1.\micro\ampere}$. At this point the diode behaviour of the gates, as well as the linear resistance of the ohmic contacts could be probed.
+However, just by connecting the Keithley and taking the respective port from ground, we can gain an indication of weather we are connected to an ohmic contact or a gate. For efficiency, long measurements are usually omitted at this point. (Make sure that the output of the Keithley is ON! Otherwise it is left floating and the voltage is not defined.) 
+\item At this point the sample can be cooled down to $\si{4K}$ and the measurements continued here. It has been useful in the past to mark the ohmic contacts with tape on the breakout box.
+\item Once "special-measure" is set up using the setup-script, Lock-In and DecaDAC can be connected to the Breakout Box. Make sure, that the fridge is grounded either by the Lock-In Output or a separate ground! Only disconnect the ground line if the Lock-In is connected.
+\item At this point Pinch-Off measurements using the automation script can be performed. Detailed description can be found in REF.
+\item Given that the sensing dots can be pinched off, tuning measurements for the RF readout cirucit can be performed at this point. Power levels of $\si{50.dBm}$ are be sufficent, and should not be exceeded to prevent damage to the sample. More details can be found HERE.
+
+\end{enumerate}
+
+
+
+\newpage
+\section{Bootstrap Sequences}
+
+\begin{table}[htbp]
+        \centering
+        \begin{tabular}{l | l l l l|r} \hline 
+            $j$ &$U_j$  &&&&   $M_{i(j)}$\\ \hline \hline
+       
+            1&$\cn $&$\la \x{1}$   &&&   $\m{1}$ \\ 
+            2& $\x{1} $&$\la \cn$   &&&   $\m{1}$ \\ 
+            3&$\cn $&$\la \y{1}$   &&&   $\m{1}$ \\ 
+            4&$\y{1}$&$\la \cn$   &&&   $\m{1}$ \\
+            5&$\cn $&$\la \x{2}$    &&&   $\m{2}$ \\
+            6&$\cn $&$\la \y{2}$    &&&   $\m{2}$ \\
+    %
+            7&$\x{1} $&   $\la \cn$ & $\la \x{1}$  &&   $\m{1}$ \\ 
+            8&$\x{1} $&   $\la \cn$ & $\la \y{1}$  &&   $\m{1}$ \\  
+            9&$\y{1} $&   $\la \cn$ & $\la \x{1}$  &&   $\m{1}$ \\ 
+            10&$\x{1} $&   $\la \x{2}$ & $\la \cn$  &&   $\m{2}$ \\ 
+            11& $\y{1} $&   $\la \cn$ & $\la \y{1}$  &&   $\m{1}$ \\  
+            12&$\y{1} $&   $\la \y{2}$ & $\la \cn$  &&   $\m{2}$ \\ 
+            13&$\y{2} $&   $\la \cn$ & $\la \x{2}$  &&   $\m{2}$ \\ 
+    %
+            14&$\x{1} $&   $\la \cn$ & $\la \cn$  & $\la \y{1} $&   $\m{1}$ \\ 
+            15&$\x{1} $&   $\la \x{2}$ & $\la \y{1}$  & $\la \x{2}$&   $\m{2}$ \\  \hline
+    %
+            
+            16&$\cn $&$\la \cn$   &&&   $\m{1}$ \\ 
+            17&$\cn $&$\la \cn$   &&&   $\m{2}$ \\ 
+             
+        \end{tabular}
+        \caption{Caption}
+        \label{tab:sequences}
+    \end{table}
+    
+    
+  \begin{table}[htbp]
+        \centering
+        \begin{tabular}{l | l l l l|r} \hline 
+            $j$ &$U_j$  &&&&   $M_{i(j)}$\\ \hline \hline
+            1&$\x{1}$   &&&&   $\m{1}$ \\ 
+            2&$\x{2}$   &&&&   $\m{2}$ \\ 
+            3&$\x{1}$   &&&&   $\m{1}$ \\ 
+            4&$\y{1}$   &&&&   $\m{1}$ \\ 
+            5&$\x{2}$   &&&&   $\m{2}$ \\
+            6&$\y{2}$   &&&&   $\m{2}$ \\
+    %  
+            7&$\cn $&$\la \x{1}$   &&&   $\m{1}$ \\ 
+            8& $\x{1} $&$\la \cn$   &&&   $\m{1}$ \\ 
+            9&$\cn $&$\la \y{1}$   &&&   $\m{1}$ \\ 
+            10&$\y{1}$&$\la \cn$   &&&   $\m{1}$ \\
+            11&$\cn $&$\la \x{2}$    &&&   $\m{2}$ \\
+            12&$\x{1} $&$\la \y{1}$   &&&   $\m{1}$ \\
+            13&$\y{1} $&$\la \x{1}$    &&&   $\m{1}$ \\
+            14&$\cn $&$\la \y{2}$    &&&   $\m{2}$ \\
+            15&$\x{2} $&$\la \y{2}$   &&&   $\m{2}$ \\
+            16&$\y{2} $&$\la \x{2}$    &&&   $\m{2}$ \\
+    %
+            16&$\x{1} $&   $\la \cn$ & $\la \x{1}$  &&   $\m{1}$ \\ 
+            17&$\x{1} $&   $\la \cn$ & $\la \y{1}$  &&   $\m{1}$ \\  
+            18&$\y{1} $&   $\la \cn$ & $\la \x{1}$  &&   $\m{1}$ \\ 
+            19& $\x{1} $&   $\la \x{2}$ & $\la \x{1}$  &&   $\m{2}$ \\ 
+            20& $\y{1} $&   $\la \cn$ & $\la \y{1}$  &&   $\m{1}$ \\  
+            21&$\y{1} $&   $\la \x{1}$ & $\la \x{1}$  &&   $\m{1}$ \\ 
+            22& $\y{1} $&   $\la \y{2}$ & $\la \x{1}$  &&   $\m{2}$ \\ 
+            23& $\y{2} $&   $\la \cn$ & $\la \y{1}$  &&   $\m{2}$ \\ 
+            24& $\y{2} $&   $\la \x{2}$ & $\la \x{1}$  &&   $\m{2}$ \\
+    %
+            25&$\x{1} $&   $\la \cn$ & $\la \cn$  & $\la \y{1} $&   $\m{1}$ \\ 
+            26&$\x{1} $&   $\la \x{2}$ & $\la \y{1}$  & $\la \x{2}$&   $\m{2}$ \\  \hline
+    %
+            27&$\x{1} $&$\la \x{1}$   &&&   $\m{1}$ \\ 
+            28& $\y{1} $&$\la \y{1}$   &&&   $\m{1}$ \\ 
+            29&$\cn $&$\la \cn$   &&&   $\m{1}$ \\ 
+             
+        \end{tabular}
+        \caption{Caption}
+        \label{tab:sequences}
+    \end{table}
+
+ 
+
+\end{appendix}
+\phantomsection
+%\addcontentsline{toc}{chapter}{Bibliography}

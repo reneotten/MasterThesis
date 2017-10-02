@@ -1,0 +1,32 @@
+\chapter{Device Testing}
+
+In this chapter I will discuss the gate layouts we used during this project as well as explain the selection process we follow in order to find samples, fullfilling the requirements for the implementation of two qubit gates (CHAPTERS).
+\section{Sample Design}
+In order to do exchange mediated two qubit gates, we have to modify existing, proven gate design to our requirements. In particular the distance between qubit one and two has to be reduced greatly in order to allow for the exchange coupling to be the dominat interaction. A comparison between our layout and previous ones is shown in \rfig{fig:layout_comp}.
+\begin{figure}[htbp] 
+  \centering
+     \subfigure[]{\includegraphics[width=0.2\textwidth]{./pictures/dummy}}
+     \subfigure[]{\includegraphics[width=0.2\textwidth]{./pictures/dummy}}
+  \caption{}
+  \label{fig:layout_comp}
+\end{figure}
+Each of the gates is supposed to control a specific parameter of the two qubit system, be it the tunnel coupling between to dots, or the overall position of one dot. In order to given an overview over the specific purposes of different gates an illustrated version of the gate layout is shown in \rfig{fig:colorful_gatelayout}.
+
+\begin{figure}[htbp]\centering
+     \centering
+     \includegraphics[width=0.2\textwidth]{./pictures/dummy}
+     \caption{}
+     \label{fig:colorful_gatelayout}
+ \end{figure}
+ 
+\section{Testing Process}
+In order to select a sample, where a sufficient number of gates is working, we have to perform a number of somewhat standardized measurements. I will provide a brief overview adapted from tim Botzem (REF) at this point. A more detailed "checklist" is provided in \rapp{app:testing}.
+
+\section{Pinch Off Measurements}
+One of the most important pre-characterization measurements are so called Pinch Off measurements. The sample is contacted as shown in PICTURE. WE apply a bias voltage across two ohmic contacts and measure the resulting current using a Lock-In amplifier (Settings are included in Appendix REF). We than use at least two gates to create a narrow channel by applying negative voltages. This will slowly reduce the conductance across the sample until it vanishes completely. The point at which the current reaches zero is called pinch off voltage and gives an indication of the distance of the gates forming the channel. Examples are shown in PICTURE.
+Using information on the symetry of the gate design we can easily evaluate the state of the device without resorting to any complicated measurements.
+
+\section{Kurt Measurements}
+Broke
+\subsection{Future Gate Designs}
+Design for future generations

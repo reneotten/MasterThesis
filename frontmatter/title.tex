@@ -1,0 +1,57 @@
+\def\blurb{%
+ 
+\Large Master's Thesis in Physics\\[0.8em]
+\footnotesize presented to\\
+\normalsize The Faculty of Mathematics, Computer Science \\and Natural Sciences
+\normalsize at RWTH Aachen University\\[0.8em]
+\normalsize Department of Physics, Quantum Technology Group\\
+\normalsize Oktober 2017\\[0.8em]
+
+\footnotesize supervised by\\
+\normalsize Prof. Hendrik Bluhm, PhD\\
+Pascal Cerfontaine, M.Sc. RWTH
+ 
+  }
+
+\def\clap#1{\hbox to 0pt{\hss #1\hss}}%
+\def\ligne#1{%
+  \hbox to \hsize{%
+    \vbox{\centering #1}}}%
+\def\haut#1#2#3{%
+  \hbox to \hsize{%
+    \rlap{\vtop{\raggedright #1}}%
+    \hss
+    \clap{\vtop{\centering #2}}%
+    \hss
+    \llap{\vtop{\raggedleft #3}}}}%
+\def\bas#1#2#3{%
+  \hbox to \hsize{%
+    \rlap{\vbox{\raggedright #1}}%
+    \hss
+    \clap{\vbox{\centering #2}}%
+    \hss
+    \llap{\vbox{\raggedleft #3}}}}%
+
+\makeatletter
+  \let\oldcaption\caption
+  \renewcommand{\caption}[2][]{%
+  \oldcaption[#1]{\textbf{#1} #2}
+  }
+\makeatother
+
+\thispagestyle{empty}\vbox to .9\vsize{%
+  \vss
+  \vbox to 1\vsize{%
+    
+    
+    \vspace{10cm}\ligne{\Huge Exchange Mediated Two-Qubit Gates for Two-Electron Spin Qubits}
+    \vspace{5mm}
+    \ligne{\Large by René Otten}
+    \vfill
+   
+    \vspace{5mm}
+\haut{}{\blurb}{}
+   
+    }%
+  \vss
+  }

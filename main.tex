@@ -1,0 +1,813 @@
+\documentclass
+ [a4paper, 					% Papierformat
+	11pt,							% Schriftgröße
+	twoside,					% Seitenausrichtung auf gerade/ungerade Seitenzahl angepasst
+	DIV=16,						% Aufteilung der Seite (s. KOMA-Skript-Dokumentation)
+	BCOR=10mm,					% Bindungskorrektur: Zusätzlicher Rand auf der Innenseite
+										% smallheadings, normalheadings, bigheadings: selbsterklärend
+	chapterprefix, 		
+	appendixprefix, 
+	numbers=noenddot,
+	plainfootsepline,	% setzt die für heading-Seiten (alle Seiten außer Kapitelanfangsseiten) 															
+										% definierte Linie in der Fußzeile auch für plain-Seiten (Kapitelanfangsseiten)
+	parskip=half,		% Absatz wird nicht eingerückt, dafür aber um eine halbe Zeile nach unten gerückt		
+	bibliography=totoc,					
+										% Literaturverzeichnis im Inhaltsverzeichnis aufgelistet
+										% bibliography=totocnumbered dito, aber nummeriert
+	listof=totoc,			% Tabellen- und Abbildungsverzeichnis im Inhaltsverzeichnis aufgelistet
+										% listoftocnumbered dito, aber nummeriert
+										% idxtotoc: Index im Inhaltsverzeichnis aufgelistet
+	english,headinclude = true, %option was not given
+	footinclude = false, %option was not given
+	openany,          % no empty page before chapter
+	]{scrbook}				% Dokumentklassen im KOMA-Skript: scrbook, scrartcl, scrreprt
+%------------------------------------------------------------------------------------------------------
+% ---- Kodierung ---- 
+\usepackage[utf8]{inputenc}										
+\usepackage{pifont} % ist nötig, um eingekringelte Zahlen schreiben zu können
+										%(\ding{172}-\ding{211}, s. Table 188 der Datei Latex Symbols Dante)
+%------------------------------------------------------------------------------------------------------
+% ---- Sprache ----
+\usepackage[T1]{fontenc} 				
+\usepackage[english, ngerman]{babel}										
+\addto\captionsenglish{\renewcommand{\figurename}{Figure}
+											 \renewcommand{\tablename}{Table}}
+\usepackage{csquotes}
+%------------------------------------------------------------------------------------------------------
+% ---- Farbdefinition ----
+\usepackage[table]{xcolor}
+										% Paket für farbigen Text -> xcolor statt color und table statt usename nötig für 										
+										% farbig alternierende Tabellenzeilen dann \xdefinecolor statt \definecolor!
+\usepackage{lmodern}
+
+%		\xdefinecolor{DarkBlue}{RGB}{0,0,100}
+%		\xdefinecolor{CoolBlue}{RGB}{6,96,120}
+%		\xdefinecolor{CoolBlue2}{RGB}{6,96,143}
+%		\xdefinecolor{CoolBlue3}{RGB}{5,111,166}
+%		\xdefinecolor{LightBlue}{RGB}{157,193,211}
+%		\xdefinecolor{Gray}{RGB}{100,100,100}
+
+%  	\xdefinecolor{RWTHBlue}{RGB}{0,84,159} 
+%  	\xdefinecolor{RWTHlightBlue}{RGB}{142,186,229}
+%	 	\xdefinecolor{RWTHBlue}{RGB}{0,103,166} 
+%		\xdefinecolor{RWTHlightBlue}{RGB}{119,158,201}
+%		\xdefinecolor{RWTHRed}{RGB}{204,0,0} 
+%		\xdefinecolor{Gray1}{RGB}{238,238,236}
+%		\xdefinecolor{Gray2}{RGB}{211,215,207}
+%		\xdefinecolor{Gray3}{RGB}{186,189,182}
+%		\xdefinecolor{hellblau1}{rgb}{0.4666,0.7196,0.8882}
+%		\xdefinecolor{hellblau2}{rgb}{0.6666,0.7196,0.8882}
+
+% Alles s/w (fast)
+	 	\xdefinecolor{RWTHBlue}{RGB}{0,0,0} 
+	 	\xdefinecolor{myRWTHBlue}{RGB}{0,0,0} %{0,84,159} 
+		\xdefinecolor{RWTHlightBlue}{RGB}{0,0,0} 
+		\xdefinecolor{RWTHRed}{RGB}{0,0,0} %{0,51,153}  % now blue
+		\xdefinecolor{Gray1}{RGB}{0,0,0} 
+		\xdefinecolor{Gray2}{RGB}{0,0,0} 
+		\xdefinecolor{Gray3}{RGB}{0,0,0} 
+		\xdefinecolor{hellblau1}{rgb}{0,0,0} 
+		\xdefinecolor{hellblau2}{rgb}{0,0,0} 
+		
+% Farben für Matlab-Listings
+\xdefinecolor{hellgelb}{rgb}{1,1,0.85}     % Hintergrundfarbe
+\xdefinecolor{colKeys}{RGB}{0,0,255}       % blau
+\xdefinecolor{colIdentifier}{RGB}{0,0,0}	  % schwarz
+\xdefinecolor{colComments}{RGB}{34,139,34} % gruen
+\xdefinecolor{colString}{RGB}{160,32,240}  % violett
+
+%------------------------------------------------------------------------------------------------------
+% ---- Eigene Befehlsdefinitionen ----
+\usepackage{xspace}
+\usepackage{multirow}
+\usepackage{titletoc}
+\usepackage{xspace}
+\usepackage{lscape}
+\usepackage{bbold}
+\usepackage{multicol}
+\usepackage{siunitx}
+\usepackage{lipsum}
+% Referenzieren
+\newcommand{\rfig}[1]{Fig.\,\ref{#1}}
+\newcommand{\rapp}[1]{App.\,\ref{#1}}
+\newcommand{\req}[1]{Eq.\,(\ref{#1})}
+\newcommand{\rsec}[1]{Sec.\,\ref{#1}}      
+\newcommand{\rchap}[1]{Chap.\,\ref{#1}} 
+\newcommand{\rtab}[1]{Tab.\,\ref{#1}}  
+
+% Short mathcal
+\newcommand{\mc}[1]{\ensuremath{\mathcal{#1}}}
+\newcommand{\mr}[1]{\ensuremath{\mathrm{#1}}}
+\newcommand{\vsym}[1]{\ensuremath{\bm{#1}}}
+% Shorthands
+\newcommand{\tr}[0]{\ensuremath{\mathrm{tr}}\xspace}
+\newcommand{\pqs}[0]{\ensuremath{\Ket{\psi}}\xspace}
+\newcommand{\Ut}[0]{\ensuremath{U_t}\xspace}
+\newcommand{\qp}[0]{\ensuremath{\mc{E}}\xspace}
+\newcommand{\F}[0]{\ensuremath{\mc{F}}\xspace}
+\newcommand{\IF}[0]{\ensuremath{1-\mc{F}}\xspace}
+\newcommand{\ptm}[0]{\ensuremath{\mc{R}}\xspace}
+\newcommand{\dif}[0]{\ensuremath{d}\xspace}
+\newcommand{\sint}[3]{\ensuremath{\int#3 \! #1 \, \dif #2}}
+\newcommand{\bsint}[3]{\ensuremath{\int#3 \! \dif #2 \, #1}}
+\newcommand{\del}[0]{\ensuremath{\partial\xspace}}
+\newcommand{\sts}[0]{S-T\textsubscript{0}\xspace}
+\newcommand{\db}[0]{\ensuremath{\mr{\Delta}B}\xspace}
+\newcommand{\dbz}[0]{\ensuremath{\mr{\Delta}B_z}\xspace}
+\newcommand{\ddbz}[0]{\ensuremath{\delta \mr{ \Delta}B_z}\xspace}
+\newcommand{\dt}[0]{\ensuremath{\mr{\Delta}t}\xspace}
+\newcommand{\je}[0]{\ensuremath{J(\epsilon)}\xspace}
+\newcommand{\jj}[0]{\ensuremath{J}\xspace}
+\newcommand{\djj}[0]{\ensuremath{\deps}\xspace}
+\newcommand{\epst}[0]{\ensuremath{\epsilon(t)}\xspace}
+\newcommand{\eps}[0]{\ensuremath{\epsilon}\xspace}
+\newcommand{\deps}[0]{\ensuremath{\delta \epsilon}\xspace}
+\newcommand{\vecsig}[0]{\ensuremath{\vsym{\sigma}}\xspace}
+\newcommand{\figlabel}[1]{\textbf{(#1)}}
+\newcommand{\chim}[0]{\ensuremath{\chi}\xspace}
+\newcommand{\dm}[0]{\ensuremath{\rho}\xspace}
+\newcommand{\dv}[0]{\ensuremath{\mathbf{r}}\xspace}
+
+\newcommand{\px}[0]{\ensuremath{\sigma_x}\xspace}
+\newcommand{\py}[0]{\ensuremath{\sigma_y}\xspace}
+\newcommand{\pz}[0]{\ensuremath{\sigma_z}\xspace}
+\newcommand{\eye}[0]{\ensuremath{I}\xspace}
+\newcommand{\ex}[1]{\ensuremath{\left\langle #1 \right\rangle}\xspace}
+\newcommand{\nseg}[0]{\ensuremath{N_{\mathrm{seg}}}\xspace}
+\newcommand{\ndbz}[0]{\ensuremath{N_{\dbz}}\xspace}
+\newcommand{\nruns}[0]{\ensuremath{N_{\mathrm{runs}}}\xspace}
+\newcommand{\dg}{\ensuremath{^\circ}}%
+\newcommand{\thz}{\ensuremath{\theta = 0\dg}\xspace}
+\newcommand{\thn}{\ensuremath{\theta = 90\dg}\xspace}
+\newcommand*\conj[1]{\overline{#1}}
+\newcommand*\mean[1]{\overline{#1}}
+\newcommand{\ud}[0]{\ensuremath{\ket{\uparrow \downarrow}}\xspace}
+\newcommand{\du}[0]{\ensuremath{\ket{\downarrow \uparrow}}\xspace}
+\newcommand{\uu}[0]{\ensuremath{\ket{\uparrow \uparrow}}\xspace}
+\newcommand{\dd}[0]{\ensuremath{\ket{\downarrow \downarrow}}\xspace}
+\newcommand{\la}[0]{\ensuremath{\leftarrow}\xspace}
+
+\newcommand{\ii}[0]{\ensuremath{\eye \otimes \eye}\xspace}
+\newcommand{\ix}[0]{\ensuremath{\eye \otimes \px}\xspace}
+\newcommand{\iy}[0]{\ensuremath{\eye \otimes \py}\xspace}
+\newcommand{\iz}[0]{\ensuremath{\eye \otimes \pz}\xspace}
+\newcommand{\XI}[0]{\ensuremath{\px \otimes \eye}\xspace}
+\newcommand{\xx}[0]{\ensuremath{\px \otimes \px}\xspace}
+\newcommand{\xy}[0]{\ensuremath{\px \otimes \py}\xspace}
+\newcommand{\xz}[0]{\ensuremath{\px \otimes\pz}\xspace}
+\newcommand{\yi}[0]{\ensuremath{\py \otimes \eye}\xspace}
+\newcommand{\yx}[0]{\ensuremath{\py \otimes \px}\xspace}
+\newcommand{\yy}[0]{\ensuremath{\py \otimes \py}\xspace}
+\newcommand{\yz}[0]{\ensuremath{\py \otimes \pz}\xspace}
+\newcommand{\zi}[0]{\ensuremath{\pz \otimes \eye}\xspace}
+\newcommand{\zx}[0]{\ensuremath{\pz \otimes \px}\xspace}
+\newcommand{\zy}[0]{\ensuremath{\pz \otimes \py}\xspace}
+\newcommand{\zz}[0]{\ensuremath{\pz \otimes \pz}\xspace}
+
+\newcommand{\x}[1]{\ensuremath{X_{\pi/2}^{(#1)}}\xspace}
+\newcommand{\y}[1]{\ensuremath{Y_{\pi/2}^{(#1)}}\xspace}
+\newcommand{\cn}[0]{\ensuremath{CNOT}\xspace}
+\newcommand{\m}[1]{\ensuremath{M_{z}^{(#1)}}\xspace}
+\newcommand{\algaas}{\ensuremath{\mr{Al_{0.3}Ga_{0.7}As}}}
+\newcommand{\gaas}{\ensuremath{\mr{GaAs}}}
+
+
+
+
+%ttfamily
+\newcommand{\ttf}[1]{{\ttfamily #1}}
+\newcommand{\parheading}[1]{\vspace{0.5em}{\noindent \sffamily \textbf{#1}}\vspace{0.25em}\\
+}
+% Große römische Zahlen im Fließtext: I durch \Roem{1}, V durch \Roem{5} usw.
+\makeatletter 			% Den \catcode des at-Zeichens (»@«) auf 11 (letter) setzen. Nötig für Einlesen von Quellcodes.
+\newcommand{\Roem}[1]{%
+                      \textsc{%           % für Kapitölchen
+                              \@Roman{#1}% Das Argument als roemische Ziffer
+                              }%\          % Ein normalgroßes Leerzeichen, wichtig bei nonfrenchspacing
+                     %\ignorespaces       % Keine weiteren Leerzeichen ausgeben.
+                      }
+\makeatother 				% Den \catcode des at-Zeichens (»@«) auf 12 (other) setzen. 
+%------------------------------------------------------------------------------------------------------
+% ---- Inhaltsverzeichnis ----
+\setcounter{tocdepth}{3} 
+										
+%------------------------------------------------------------------------------------------------------
+% ---- Seitenlayout ----
+% ---- Gliederung und Kapitelüberschriften ----
+\setcounter{secnumdepth}{3} 
+										% Bestimmt, bis zu welcher Schachtelungstiefe eine Nummerierung der Überschriften 										 
+										% erfolgt.Standardmäßig ist 2 eingestellt, d.h. Kapitel- Abschnitts- und 															% Unterabschnittsüberschriften erhalten eine fortlaufende Nummer.
+										% Mögliche Werte sind:
+											% -1 	keine Überschrift wird nummeriert
+											% 0 	Kapitelüberschriften (oder Abschnittsüberschriften im article.sty) werden 											
+											%     nummeriert
+											% 1 	die beiden höchsten Ebenen werden nummeriert
+											% 5 	alle Überschriften werden nummeriert. (Die Werte 2, 3, 4 ergeben die 												  	
+											%     Zwischenwerte...) 
+%\renewcommand*{\raggedsection}{} 
+										% KOMA-Script setzt Überschriften von \chapter bis \subparagraph in linksbündigem 										
+										% Flattersatz mit hängendem Einzug. Verantwortlich ist dafür die Anweisung 														
+										% \raggedsection, die vordefiniert ist als: \let\raggedsection\raggedright
+										% Die Anweisung \raggesection kann mit \renewcommand*{\raggedsection}{} oder 													
+										% \let\raggedsection\relax so umdefiniert werden, dass Überschriften im Blocksatz 										
+										% stehen.
+% \setkomafont{chapter}{\color{RWTHBlue}\bfseries\rmfamily\Large}
+										% Einstellungen der Schrift der Kapitelüberschrift im KOMA-Skript
+										% (Schriftfarbe, fetter Text, Schriftart, Schriftgröße)
+										% Die Schriftformatierung der Kapitelüberschriften gebe ich in \titleformat ein 											
+										% paar Zeilen weiter unten schon an, weshalb sie an dieser Stelle überflüssig ist.	
+% \setkomafont{chapter}{\color{RWTHBlue}\bfseries\sffamily\Large}
+\setkomafont{section}{\bfseries\sffamily\Large\color{RWTHBlue}}			
+\setkomafont{subsection}{\bfseries\sffamily\large\color{RWTHBlue}}
+%\setkomafont{subsubsection}{\bfseries\sffamily\large\color{RWTHBlue}}
+										
+\usepackage{titlesec}
+										% beliebige Formatierung von Überschriften, für den folgenden Befehl notwendig										
+ \titleformat{\chapter}[display]
+ 						 {\vspace*{-2cm}\sffamily\bfseries\color{RWTHBlue}\fontsize{22}{22}\selectfont}
+             {\filleft{\chaptertitlename} {\thechapter}}
+             {0,5ex}
+             {{\color{RWTHBlue}\titlerule}\vspace{2ex}} 
+             []
+             
+ \titleformat{\part}[display]
+ 						 {\vspace*{-2cm}\sffamily\bfseries\color{RWTHBlue}\fontsize{27}{27}\selectfont}
+             {Part {\thepart}}
+             {0,5ex}
+             {{\color{RWTHBlue}\titlerule}\vspace{2ex}} 
+             []
+										% \titleformat{Überschriftenklasse}[Absatzformatierung]
+										%             {Textformatierung}
+										%             {Kapitelnummer/Label mit Angaben zur Schriftformatierung (kann freigelassen werden)}
+										%             {Abstand zw. Kapitelnummer/Label und Überschriftentext}
+										%             {Code vor der Überschrift}
+										%             [Code nach der Überschrift]
+										% {\part, \chapter, \section,...}[hang, block, display, runin, leftmargin, rightmargin, drop, wrap, frame]
+										% {\vspace bestimmt horizontale Position, negativer Abstand schiebt alles nach oben;
+										%  Schriftart, fettgedruckt, Schriftfarbe, Schriftgröße}
+										% {\chaptertitlename erzeugt "Chapter", Leerzeichen, \thechapter erzeugt die entsprechende Kapitelnummer}
+										% {ob der Abstand vertikal oder horizontal gemessen wird, hängt von der Abstatzformatierung ab (display -> vertikal); 										%  ex entspricht Höhe des Buchstaben x; dieses Feld darf nicht frei gelassen werden -> soll kein Platz zwischen 
+										%  Kapitelnummer und Überschrift gelassen werden, muss man 0ex/0cm/... einsetzen}
+										% {erzeugt schwarze Linie}
+										% []
+											% Mit dem Format display wird das Label in einen eigenen Absatz gesetzt, mit dem Format hang steht es auf gleicher 
+												% Höhe wie die Linie der Kopfzeile, weitere Bedeutungen: 
+												% http://ctan.org/tex-archive/macros/latex/contrib/titlesec/titlesec.pdf
+											% \fontsize{size}{skip} ändert die Schriftgröße (size) und den Zeilenabstand (skip); um diesen Befehl wirksam zu 
+											% machen, ist \selectfont nötig -> \fontsize{size}{skip}\selectfont
+											% \filleft: rechtsbündiger Text (\filright: linksbündiger Text, \filinner: Text immer am äußeren Seitenrand)
+											
+% ---- Zeilenabstand ----
+\usepackage{setspace} 
+\onehalfspace				
+
+% ---- Kopf- & Fußzeilen ----
+
+% (vgl. zur Seitenaufteilung ftp://ftp.dante.de/pub/tex/macros/latex/contrib/koma-script/scrguide.pdf, Seite 231)
+
+\usepackage{scrpage2}
+										% für Verwendung von Kopf- und Fußzeilen
+										% definiert eigene plain- und heading-Stile: scrplain und scrheadings
+									  	 % (plain = Seitenzahl in Fußzeile, Kopfzeile leer,
+									  	 %  headings erlaubt komplexere Einstellungen)
+									  	 % \pagestile{scrheadings} scrplain muss nicht separat aufgerufen werden, da scrheadings das ohnehin tut 
+										   
+\clearscrheadings
+\clearscrplain			% löscht voreingestellte Stile
+	
+	
+	
+% Eigene Einstellungen:
+
+
+
+%\setlength{\headheight}{1.1\baselineskip}
+                       % LaTeX gibt mir in meinem speziellen Fall folgende Warnung aus: 
+                       	% Package scrpage2 Warning: seems you are using a very small headheight. If you get overfull \vbox warnings at 
+                       	% almost every page, you should increase headheight e.g. writing \setlength{\headheight}{1.1\baselineskip} into 
+                       	% the preambel of your document.
+                       % Dies ist aber nicht zwingend nötig.
+\automark[chapter]{section}
+										% \automark[<rechte Seite>]{<linke Seite>}
+										% die rechte Seite wird in der Kopf-/Fußzeile mit \rightmark, die linke Seite mit \leftmark aufgerufen
+
+% Following options changed, original ones commented out
+\setkomafont{pagenumber}{\normalfont \sffamily} 
+%\setkomafont{pagenumber}{\normalfont \sffamily \bfseries \color{RWTHBlue}}     
+										% Einstellungen der Schrift der Seitenzahl im KOMA-Skript
+										% Standardfont, Schriftart, fetter Text, Schriftfarbe
+										
+\setheadsepline{1pt}[{\color{RWTHBlue}}]
+										% \setheadsepline[Länge]{Dicke}[Befehle] erzeugt Linie unter dem Header
+										% \setheadtopline[Länge]{Dicke}[Befehle] erzeugt Linie über dem Header
+%\setfootsepline{1pt}[{\color{RWTHBlue}}]
+										% \setfootsepline[Länge]{Dicke}[Befehle] erzeugt Linie über der Fußzeile
+										% \setfoottopline[Länge]{Dicke}[Befehle] erzeugt Linie unter der Fußzeile
+\lehead[]{\pagemark}
+\rehead[]{\sffamily \upshape \color{RWTHBlue} \rightmark}
+                    % Kopfzeile, linker Seitenrand bei geraden Seitenzahlen -> äußerer Rand
+                    % [steht auf Kapitelseiten in der Kopfzeile/Fußzeile (Eigentlich gibt man hier an, was man da beim pagestyle "plain" 	
+                    %  haben möchte, das ist auch der Seitenstil, der bei Seiten mit neuen Kapitelüberschriften gewählt wird)]
+                    % {steht auf allen anderen Seiten in der Kopfzeile/Fußzeile}
+                      % []{Schriftart, aufrecht, Schriftfarbe, Einfügen des Kapitelnamens}
+\rohead[]{\pagemark}
+\lohead[]{\sffamily \upshape {\color{RWTHBlue} Section \leftmark}}
+										% Kopfzeile, rechter Seitenrand bei ungeraden Seitenzahlen -> äußerer Rand
+										% [steht auf Kapitelseiten in der Kopfzeile/Fußzeile (Eigentlich gibt man hier an, was man da beim pagestyle "plain" 	
+                    %  haben möchte, das ist auch der Seitenstil, der bei Seiten mit neuen Kapitelüberschriften gewählt wird)]
+                    %	{steht auf allen anderen Seiten in der Kopfzeile/Fußzeile}
+                      % []{Schriftart, aufrecht, Schriftfarbe, Einfügen eines eigenen Textes (also nur auf Seiten, auf denen kein neues 
+                      %    Kapitel beginnt)}
+%\ofoot[{\sffamily \color{RWTHBlue} \pagemark}]{{\sffamily \color{RWTHBlue} \pagemark}}
+										% Fußzeile, äußerste Textbox (mittlere Textbox: \cfoot, innerste Textbox: \ifoot)
+ 										% [steht auf Kapitelseiten in der Kopfzeile/Fußzeile (Eigentlich gibt man hier an, was man da beim pagestyle "plain" 	
+                    %  haben möchte, das ist auch der Seitenstil, der bei Seiten mit neuen Kapitelüberschriften gewählt wird)]
+                    % {steht auf allen anderen Seiten in der Kopfzeile/Fußzeile}
+ 											% [Schriftart, Schriftfarbe, Einfügen der Seitenzahl]{Schriftart, Schriftfarbe, Einfügen der Seitenzahl}
+%\ifoot[\sffamily \upshape {\color{RWTHBlue}High-Fidelity Qubit Gates for Two-Electron Spin Qubits}]
+%      {\sffamily \upshape {\color{RWTHBlue}High-Fidelity Qubit Gates for Two-Electron Spin Qubits}}
+										% Fußzeile, innerste Textbox (s.o.)
+										% [steht auf Kapitelseiten in der Kopfzeile/Fußzeile(Eigentlich gibt man hier an, was man da beim pagestyle "plain" 	
+                    %  haben möchte, das ist auch der Seitenstil, der bei Seiten mit neuen Kapitelüberschriften gewählt wird)]
+                    % {steht auf allen anderen Seiten in der Kopfzeile/Fußzeile}
+                    	% [Schriftart, aufrecht, Schriftgröße, Text in entsprechenden Farben]
+                    	% {Schriftart, aufrecht, Schriftgröße, Text in entsprechenden Farben}
+                    		% \vert erzeugt einen senkrechen Strich (|), muss in mathematischer Umgebung stehen
+\pagestyle{scrheadings} 
+										% Ruft selbst definierte Einstellungen für Kopf- und Fußzeilen auf.
+
+
+										
+% \automark[section]{chapter}											% \automark[<rechte Seite>]{<linke Seite>} im Header
+										% Beispiele: 
+										% \ohead{\pagemark}           % Oben außen: Seitenzahlen
+										% \ihead{\headmark} 					% Oben innen: Setzt Kapitel und Section automatisch
+										% \rehead{\leftmark} 					% Oben links: Chapter ???
+										% \lohead{\rightmark}				  % Oben rechts: Section ???
+										% \cfoot[\pagemark]{} 				% Mitte unten: Seitenzahlen bei plain
+										%\cfoot[]{\pagemark} 					% Mitte unten: Seitenzahlen bei headings
+
+
+
+
+%\begin{landscape}
+%...
+%\end{landscape}
+% ---- Bilder ----
+
+\usepackage{graphicx} 	
+										% Einbinden von Bildern	
+										% automatische Konvertierung von .eps nach .pdf
+%
+\usepackage{wrapfig}
+\usepackage[sf,small,nooneline,FIGTOPCAP]{subfigure} 
+															
+\usepackage[format=plain]{caption}
+\usepackage{placeins} 						
+\usepackage[]{subfigure}
+%\usepackage{svg}
+\usepackage[rflt]{floatflt} 
+									
+\makeatletter										
+	\newcommand\figcaption{\def\@captype{Figure}\caption}
+	\newcommand\tabcaption{\def\@captype{Table}\caption}
+\makeatother
+										
+\addtokomafont{captionlabel}{\color{myRWTHBlue}\sffamily\small\bfseries}							
+\addtokomafont{caption}{\color{black}\sffamily\small}									
+											
+%------------------------------------------------------------------------------------------------------
+% ---- Tabellen ----
+%\usepackage[table]{xcolor} s.o. bei Farbdefinitionen!
+                    % erlaubt Verwendung von Farben in Tabellen
+                     		% \cellcolor{color} 		Einfärben von einzelnen Tabellenzellen
+                     		% \rowcolor{color} 			Einfärben von Zeilen										
+                     		%			-> \rowcolors{<starting row>}{<odd rows colour>}{<even rows colour>}
+                     		%												Erzeugt abwechselnd gefärbte Zeilen
+                     		% \hiderowcolors				Färbt Zeilen NICHT mehr ein
+                     		% \showrowcolors				Färbt Zeilen wieder ein
+                     		% \columncolor{color}		Einfärben von Spalten
+\usepackage{booktabs}
+										% erlaubt die Verwendung von \toprule, \midrule und \bottomrule zum Erzeugen dicker Linien
+
+\usepackage{longtable}
+                    % Ermöglicht Einfügen von Tabellen, die sich über mehrere Seiten erstrecken
+%------------------------------------------------------------------------------------------------------
+% ---- Aufzählung ----
+\usepackage{enumerate}
+\renewcommand{\labelitemi}{$\diamond$}
+ 										
+%------------------------------------------------------------------------------------------------------
+% ---- Fußnote ----                     		
+\interfootnotelinepenalty=10000	
+										% Verhindert das Aufsplitten einer Fußnote auf 2 Seiten.																	
+%------------------------------------------------------------------------------------------------------
+% ---- Referenzieren ----
+%\usepackage[numbers,sort&compress]{nat}   
+%                    % Wenn dieses Paket mit den angegebenen Optionen geladen wird, werden die 														
+%                    % Referenzen sortiert: [12,1,5,6,4] -> [1,4-6,12] 
+%\bibliographystyle{apsrev} % revtex4
+
+\usepackage[backend=bibtex,
+	   % sortlocale=de_DE,
+    	natbib=true,
+			bibencoding=auto,			
+		  style=phys, %numeric-comp,
+		  sortcites = true,
+			arxiv = abs,
+			doi = false,
+			url = true,
+			isbn = false,
+			minnames=1,
+			maxcitenames=2,
+			maxbibnames=99,
+			backref=true,
+			hyperref=true]{biblatex}		%% Lädt das Biblatex Paket und definert den Style
+%\usepackage[citestyle=plain, bibstyle=plain, minnames=1, maxnames=2, hyperref=true]{biblatex}
+%% Styles: numeric für Zahlen in eckigen Klammern [1]
+%\renewcommand*{\nameyeardelim}{\space}
+%\defbibnote{urlinfo}{Stand der Onlineverweise: 22. August 2012.}%\today.}
+% Infos zu Biblatex http://mirror.informatik.uni-mannheim.de/pub/mirrors/tex-archive/macros/latex/exptl/biblatex/doc/examples/01-introduction.pdf
+%\defbibheading{head}{\section{Literaturverzeichnis}}
+%\addbibresource{bibliography/MA.bib}
+
+% et. al in italics
+\renewbibmacro*{name:andothers}{% Based on name:andothers from biblatex.def
+  \ifboolexpr{
+    test {\ifnumequal{\value{listcount}}{\value{liststop}}}
+    and
+    test \ifmorenames
+  }
+    {\ifnumgreater{\value{liststop}}{1}
+       {\finalandcomma}
+       {}%
+     \andothersdelim\bibstring[\emph]{andothers}}
+    {}}
+\addbibresource{./library.bib}
+
+\usepackage[colorlinks=true, linkcolor=RWTHRed, citecolor=RWTHRed, menucolor=myRWTHBlue, linktocpage=false, breaklinks=false, urlcolor=black, %backref=page, 
+pdfpagelayout=TwoColumnRight]{hyperref}
+										  												
+%\renewcommand*{\backref}[1]{}
+%	\renewcommand*{\backrefalt}[4]{%
+%	\ifcase #1 %
+%	%
+%\or
+%Cited on page #2.%
+%\else
+%Cited on pages #2.%
+%\fi
+%}						 
+%\renewcommand{\figureautorefname}{figure}
+                    % Bei Verwendung von Babel:
+                    \addto\extrasenglish{\def\figureautorefname{figure}}
+%\newcommand{\subfigureautorefname}{\figureautorefname}
+										% erzeugt bei der Verwendung von \autoref beim Verweis auf eine Subfigure die Bezeichnung "figure" 
+										\addto\extrasenglish{\def\subfigureautorefname{\figureautorefname}}
+%\renewcommand{\tableautorefname}{table}
+                    % Bei Verwendung von Babel:
+                    \addto\extrasenglish{\def\tableautorefname{table}}										
+%\renewcommand{\sectionautorefname}{Section}
+										% erzeugt bei der Verwendung von \autoref beim Verweis auf eine Subsection die Bezeichnung "section"
+										% Bei Verwendung von Babel: 
+										\addto\extrasenglish{\def\sectionautorefname{section}}
+%\renewcommand{\subsectionautorefname}{Section}
+										% erzeugt bei der Verwendung von \autoref beim Verweis auf eine Subsection die Bezeichnung "section"
+										% Bei Verwendung von Babel: 
+										\addto\extrasenglish{\def\subsectionautorefname{\sectionautorefname}}
+%\renewcommand{\subsubsectionautorefname}{\sectionautorefname}
+										% erzeugt bei der Verwendung von \autoref beim Verweis auf eine Subsubsection die Bezeichnung "section"
+										% Bei Verwendung von Babel: 
+										\addto\extrasenglish{\def\subsubsectionautorefname{\sectionautorefname}}
+%\renewcommand{\subsubsubsectionautorefname}{\sectionautorefname}
+										% erzeugt bei der Verwendung von \autoref beim Verweis auf eine Subsubsubsection die Bezeichnung "section"
+										% Bei Verwendung von Babel: 
+										\addto\extrasenglish{\def\subsubsubsectionautorefname{\sectionautorefname}}
+%\renewcommand{\equationautorefname}{equation}
+										% erzeugt bei der Verwendung von \autoref beim Verweis auf eine Subsubsubsection die Bezeichnung "section"
+										% Bei Verwendung von Babel: 
+										\addto\extrasenglish{\def\equationautorefname{equation}}
+\newcommand{\autoeqref}[1]{\hyperref[#1]{\equationautorefname~(\ref*{#1})}}			
+                    % Setzt Formelnummer in Klammern																	
+% Springer-Verlag-Konvention:
+%\addto\extrasenglish{\def\figureautorefname{Fig.}}
+%\addto\extrasenglish{\def\chapterautorefname{Chap.}}
+%\addto\extrasenglish{\def\sectionautorefname{Sect.}}
+%\addto\extrasenglish{\def\pageautorefname{p.}}
+%\usepackage{cleveref}
+                 	  % Muss nach Hyperref geladen werden!
+                 	  % Referenzieren mittels \cref (Kleinschreibung) und \Cref(Großschreibung)
+                 	  % Mehrere Verweise können durch Kommata getrennt angegeben werden: \cref{eq:1,eq:2,eq:3} -> equation 1 to 3
+                 	  % Aufbrechung einer Zusammenfassung durch zusätzliches Komma: \cref{eq:1,eq:2,eq:3,,eq:4} -> equation 1 to 3 and 4
+                 	  % options:
+                 	  %		sort: Sortiert Verweislisten, aber fasst sie nicht zusammen.
+                 	  % 	compress: Fasst zusammenhängende Verweise zusammen, aber sortiert die Liste nicht.
+                 	  %		nosort: Sortiert Verweislisten nicht und fasst sie auch nicht zusammen.
+                 	  %		sort&compress: Sortiert Verweislisten und fasst zusammenhängende Verweise zusammen. (Default)
+                 	  % !! Schreibt "footnote" statt "equation". Synchronisieren mit hyperref!?
+                 	  % !! Verschiebt im Anhang alle Bilder!?
+%Beispiel für Satzanfang:
+%\hyperref[labelName]{Section~\ref{labelName}} % Section wird groß geschrieben
+% Referenzieren auf eine bestimmte Textstelle:
+										% \autopageref{page:Textstelle}
+										% Die Textstelle muss gekennzeichnet sein durch
+										% \phantomsection\label{page:Textstelle}
+%------------------------------------------------------------------------------------------------------
+% ---- Mathematik und Sonderzeichen ----
+\usepackage[OMLmathsfit]{isomath}
+                     % Verwendung von mathsfit zum Kursivschreiben in einer serifenlosen Matheschrift
+\usepackage{amsmath, % Einbinden mathematischer Symbole
+						amssymb, % stellt Sonderzeichen für den Mathematikmodus bereit
+%           latexsym,% Einbinden von Latex-Symbolen
+            textcomp,% stellt das copyright-zeichen \textcopyright berreit
+            upgreek, % ermöglicht aufrechte Schreibweise von griechischen Buchstaben, z.B. \mu -> \upmu
+            bm,		   % ermöglicht fette UND kursive Schreibweise in Mathemodus über \bm
+%           isomath, % wird vom Paket fixmath gebraucht zur Verwendung von \mathbfit (s.o.)
+            fixmath  % Verwendung von mathbfit zum Kursiv- und Fettschreiben von griechischen Großbuchstaben
+                    }
+              
+% Übersicht über Befehle für serifenlose Matheschrift:
+% \mathsf            % serifenlose Schrift im Mathemodus (aufrecht) -> Auch für Zahlen benutzen! In kursiver Schreibweise werden die klein!
+% \mathsfit          % serifenlose, kursive Schrift im Mathemodus
+% \mathboldsans      % serifenlose, fette, kursive Schrift im Mathemodus  
+% \bm{\mathsf{}}     % serifenlose, fette Schrift im Mathemodus
+%------------------------------------------------------------------------------------------------------
+% ---- Anhang ----
+%------------------------------------------------------------------------------------------------------
+% ---- Literatur- und Bilderverzeichnis ----
+% \usepackage{multibib}
+										% Möglichkeit, mehrere Literaturverzeichnisse zu erstellen
+										% Funktioniert leider noch nicht
+%  \newcites{lit}{Bibliography}
+	% \newcites{bi}{List of Figures}
+										% \newcites{irgendwas}{Titel des ersten Verzeichnisses} ermöglicht es, im Text den \cite-Befehl, mit dem man auf 
+										% BibTeX-Einträge zugreifen und zitieren kann, zu erweitern zu \citeirgendwas:
+												% \cite{Literaturquelle1} oder \citebi{Bildquelle1}
+										% Anleitung: http://www.macuser.de/forum/f51/latex-man-dokument-146261/
+												% Erstellen einer BibteX-Datei mit den Literatureinträgen, z.B. Literature.bib und Figures.bib
+												% Diese Befehle rufen am Ende des Dokuments die Einträge in Literature.bib bzw. Figures.bib auf, die mit 
+												% \citeirgendwas mit dem ersten Verzeichnis verknüpft wurden:	
+														%\bibliographystylelit{unsrt}
+														%\bibliographylit{Zwischenbericht1Literatur_bib}		
+														%\bibliographystylebi{unsrt} 
+														%\bibliographybi{Zwischenbericht1Bilder_bib}
+												% ALTERNATIVE: TeXnicCenter verwenden, Projekt erzeugen mit aktueller Datei als Hauptdatei auswählen, bei BibTex 
+												% verwenden ein Häkchen setzen, 1x pdf kompilieren, 1x Ausgabe -> BibTex, 2x pdf kompilieren
+												% Quellen, die nicht zitiert werden, aber in den Verzeichnissen erscheinen sollen, werden mit \nocite oder 
+												% \nociteirgendwas verknüpft
+												% In der Eingabeaufforderung:
+														% latex dokument -> Kompilieren
+														% bibtex irgendwas -> Dieser Befehl erzeugt eine Datei irgendwas.aux, die mit BibTeX kompiliert werden muß
+																% Hier also: bibtex lit und bibtex bi
+														% bibtex Literatur.bib -> Kompilierung mit bibtex
+																% Hier also: bibtex Literature.bib und bibtex Figures.bib
+                          	% 2x latex dokument
+%\bibliographystyle{unsrt}                     	
+%------------------------------------------------------------------------------------------------------
+% ---- To-do-Liste ----
+\usepackage[colorinlistoftodos % Erzeugt eine farbige Box vor den To-Do-Listeneinträgen
+						,disable   % Entfernt alle To-Do-Einträge
+						]{todonotes}
+												% \todo[options]{todo text} erstellt eine To-Do-Notiz am Textrand
+													% Options:
+													% bordercolor=color			Rand der Notizbox
+													% backgroundcolor=color	Hintergrundfarbe der Box
+													% linecolor=color				Farbe der Linie, die Box und Textstelle verbindet
+													% line/noline           Erzeugt die Verbindungslinie (default) oder lässt sie weg.
+													% inline/noinline				Setzt die Kommentarbox in den Text oder an den Rand.
+													% \todo[caption={Short note}]{Text}
+													%												Erlaubt Erstellung eines langen Kommentars, bei dem "Short note" in der To-Do-Liste 
+													%                       erscheint und der Text an gewünschter Stelle im Text.
+												% \missingfigure{text} erstellt eine Platzhalter für das fehlende Bild einschließlich Text
+													% \missingfigure[figwidth=6cm]{Testing a long text string}
+													%												Erstellt Bild-Platzhalter der angegebenen Breite.
+													% \missingfigure{Testing a long text string}
+													%												Setzt Platzhalter über komplette Textbreite.
+													% \begin{wrapfigure}{r}[2cm]{6cm}
+													%  \missingfigure[figwidth=6cm]{Add a test image \ldots}
+													% \end{wrapfigure}
+													%												Setzt Platzhalter in Wrapfigure-Umgebung.
+												% \listoftodos erstellt eine To-Do-Liste
+												% \todototoc in der Präambel erzeugt den Eintrag der To-Do-Liste im Inhaltsverzeichnis
+												
+												% Meine Farbcodierung:
+													% To do!: 							default
+													% Offene Fragen:				backgroundcolor=green!40
+													% Zusatzinfos:					backgroundcolor=blue!20!white
+%------------------------------------------------------------------------------------------------------
+% ---- includeonly ----
+%\includeonly{Titelseite,
+             %Vorlage-Thesis-Introduction,
+             %Vorlage-Thesis-Theory_of_PCM, 
+             %Vorlage-Thesis-TitaniumDioxide,
+             %Vorlage-Thesis-TheFerroelectric_transition_in_GeTe,
+             %Thesis-Motivation3,
+             %scintificInstruments,
+             %Thesis-experimental_results,
+             %Thesis-Outlook,
+             %Thesis-TheoBack, 
+             %Thesis-ExpRes,
+             %Thesis-Summary,
+             %Thesis-Outlook,
+             %Vorlage-Thesis-Appendix}
+%-------------------------------------------------------------------------------------------------------             
+             
+%-------------------------------------------------------------------
+%- RWTH Aachen II. Physikalisches Institut C - Prof. Hendrik Bluhm -
+%- Projekt: Simulation and Optimization of multi qubit quantum dots-			
+%- Bachelorarbeit Rene Otten ---------------------------------------
+%- Titel: Simulation and Optimization of multi qubit quantum dots---
+%- Betreuer: Pascal Cerfontaine ------------------------------------
+%-------------------------------------------------------------------
+%- Template by Tim Leonard und Pascal Cerfontaine-------------------
+%-------------------------------------------------------------------
+\usepackage{epstopdf}
+\usepackage{epsfig}
+\usepackage{bbm}
+\usepackage{braket}
+\usepackage{geometry}
+\usepackage{here} 
+\usepackage[numbered,framed]{matlab-prettifier}
+\usepackage[final]{pdfpages}
+\lstset{%
+  style           	  = Matlab-editor,
+  basicstyle       	  = \mlttfamily\small,
+  escapechar       	  = ",
+  mlshowsectionrules 	= true,
+  mlscaleinline			= false,
+}
+%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+%\titlecontents{chapter}[0pt]{\addvspace{3pt}}{\contentsmargin{0pt}
+%\bfseries\makebox[0pt][r]{\normalsize\thecontentslabel\enspace}\normalsize}
+%{\contentsmargin{0pt}\large}{\bfseries\hfill\contentspage}[\addvspace{1pt}] %\bfseries\hfill\contentspage
+
+
+
+
+%\usepackage{perpage}
+%\MakeSorted{figure}
+%\MakeSorted{table}
+
+\begin{document}	
+
+\include{./frontmatter/title}
+  
+  
+%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+
+\listoftodos
+%\pagenumbering{Roman}
+
+%----------------------------------------------------------------------------------------------------------------------------------------	
+
+% ---- Befehle, die hinter \begin{document} stehen müssen (?): ----
+
+ %\renewcommand*\thesubfigure{\colorbox{RWTHlightBlue}{\color{black}\sffamily\small\textbf{\alph{subfigure}}}\hfill}
+						% Funktioniert weder in der Präambel noch im Dokument selbst!!!
+										% \renewcommand[\Befehl]{Anzahl der Parameter}{Inhalt} definiert einen Befehl um
+										% Die Sternchenversion \renewcommand* nimmt keine Parametertexte an, die Absatzumbrüche enthalten. Es ist 		
+										% sozusagen eine Kurzversion, die bevorzugt verwendet werden sollte. LaTeX kann so evtl. Fehler besser behandeln.
+										% Umdefinierung des Befehls \thesubfigure: Erzeugt hellblaue Box mit schwarzer Schrift, serifenfreie 
+										% Schriftart, kleine Textgröße, fettgedruckt, alphanummerische Nummerierung beginnend mit "a" 
+														% \alph{Zähler} gibt den Wert des angegebenen Zählers als lateinischen Kleinbuchstaben aus
+														% (Alternativen: \Alph (lateinische Großbuchstaben), \arabic (arabische Ziffer), 
+														% \roman (römische Zahl in Kleinbuchstaben), \Roman (römische Zahl in Großbuchstaben)
+														% \hfill definiert einen horizontalen Zwischenraum, der jede beliebige Länge annehmen kann
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------	
+%----------------------------------------------------------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------------------------------------------------------	
+
+% Festlegung der Seitenzahlzählweise
+
+%\pagenumbering{roman}	  
+										% \pagenumbering{Art} legt die Art der Seitenzählung fest. Ab dem Auftreten dieses Befehls erscheinen Seitennummern in 
+										% der angegebenen Darstellungsart; dabei steht arabic für arabische Zahlen, roman für römische Zahlen und alph für 
+										% lateinische Buchstaben. Roman und Alph stehen für die entsprechenden Großbuchstaben (s.o.). 
+										
+%----------------------------------------------------------------------------------------------------------------------------------------	
+
+% Sprachauswahl
+
+\selectlanguage{ngerman}   
+										% \selectlanguage{language} schaltet zwischen den zuvor geladenen Sprachpaketen (\usepackage[english, ngerman]{babel})
+										% um. 
+										
+%----------------------------------------------------------------------------------------------------------------------------------------
+\frontmatter
+% ---- Titelseite ----
+%\include{1_1_titlepage/titlepage}
+%----------------------------------------------------------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------------------------------------------------------	
+%----------------------------------------------------------------------------------------------------------------------------------------
+ 
+\cleardoublepage    % Beendet eine Seite und erzwingt auf den nachfolgenden Seiten die Ausgabe aller Gleitobjekte (z.B. Abbildungen), die 
+										% bislang definiert, aber noch nicht ausgegeben wurden. Dieser Befehl fügt, falls nötig, eine leere Seite ein, sodaß 	
+										% die nächste Seite nach den Gleitobjekten eine ungerade Seitennummer hat. 
+\thispagestyle{empty}
+										% \thispagestyle{Art} legt die Art des Seitenformats für eine einzelne Seite fest. 
+										% plain:      zentrierte Seitennummer am Seitenfuß
+										% empty:      keinerlei Kopf oder Fuß 
+										% headings:   Kopfzeile aus der Seitennummer und der Überschrift des laufenden Abschnitts
+										% myheadings: erlaubt es, den Seitenkopf selbst mit den \markright- und \markboth-Befehlen zu definieren. 
+										
+
+%----------------------------------------------------------------------------------------------------------------------------------------	
+
+% Sprachauswahl
+
+\selectlanguage{english}   
+										% \selectlanguage{language} schaltet zwischen den zuvor geladenen Sprachpaketen (\usepackage[english, ngerman]{babel})
+										% um. 								
+											
+%----------------------------------------------------------------------------------------------------------------------------------------	
+%----------------------------------------------------------------------------------------------------------------------------------------
+%----------------------------------------------------------------------------------------------------------------------------------------	
+% ---- Abstract ----
+
+%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+\include{./frontmatter/abstract}
+
+%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+%/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+%----------------------------------------------------------------------------------------------------------------------------------------
+ 										
+%------------------------------------------------------------------------------------------------------
+% ---- Inhaltsverzeichnis ----
+\begingroup
+	\hypersetup{linkcolor=RWTHBlue}
+	\tableofcontents 
+\endgroup
+										% Das Einbetten der Table of Contents in diese Gruppe ermöglicht SCHWARZE Einträge ins Inhaltsverzeichnis, obwohl
+										% die Einträge Hyperlinks darstellen und deshalb in der Farbe der definierten Linkcolor gedruckt werden würden.
+%------------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------------
+% ---- List of figures ----
+%\listoffigures
+%------------------------------------------------------------------------------------------------------
+% ---- List of tables ----
+%\listoftables
+%------------------------------------------------------------------------------------------------------
+\mainmatter
+\pagenumbering{arabic}
+%------------------------------------------------------------------------------------------------------
+% ---- Chapter 1: Introduction ----
+\include{./chapters/chapter1} 
+%------------------------------------------------------------------------------------------------------
+% ---- Chapter 2: 
+\include{./chapters/chapter2}
+%------------------------------------------------------------------------------------------------------
+% ---- Chapter 3: 
+\include{./chapters/chapter3}
+%------------------------------------------------------------------------------------------------------
+% ---- Chapter 4: 
+\include{./chapters/chapter4}
+%------------------------------------------------------------------------------------------------------
+% ---- Chapter 5: 
+\include{./chapters/chapter5}
+% ---- Paper Draft 1: 
+\include{./chapters/chapter6}
+% ---- Paper Draft 2: 
+\include{./chapters/chapter7}
+%------------------------------------------------------------------------------------------------------
+% ---- Chapter 8: 
+\include{./chapters/chapter8}
+%------------------------------------------------------------------------------------------------------
+\backmatter										
+%------------------------------------------------------------------------------------------------------
+% ---- Appendix + Bibliography ----
+\pagenumbering{roman}
+\include{./backmatter/appendix}
+\FloatBarrier
+\cleardoublepage 
+%\listoffigures 
+% \nocite{*}
+\printbibliography	
+%\bibliography{library.bib}
+% ---- Danksagung ----
+\include{./backmatter/Danksagung}
+%------------------------------------------------------------------------------------------------------
+% Sprachauswahl
+%\selectlanguage{ngerman}   
+										% \selectlanguage{language} schaltet zwischen den zuvor geladenen Sprachpaketen (\usepackage[english, ngerman]{babel})											
+%------------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------------											
+% ---- Erklärung ----
+\include{./backmatter/ThesisErklaerung_neu}
+%------------------------------------------------------------------------------------------------------									
+%------------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------------     
+\end{document}
+
+
